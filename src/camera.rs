@@ -12,6 +12,7 @@ pub struct Camera {
     focal_length: f64,
     samples_per_pixel: u32,
     pixel_sample_scale: f64,
+    max_depth: u32,
     center: Point3,
     delta_x: Vec3,
     delta_y: Vec3,
@@ -24,7 +25,7 @@ impl Camera {
         Self::default()
     }
 
-    pub fn from(image: &Image, focal_length: f64, height: f64, samples_per_pixel: u32) -> Self {
+    pub fn from(image: &Image, focal_length: f64, height: f64, samples_per_pixel: u32, max_depth: u32) -> Self {
         let width = height * (image.width as f64 / image.height as f64);
         let pixel_sample_scale = 1.0 / samples_per_pixel as f64;
         let center = Point3::zeros();
@@ -38,6 +39,7 @@ impl Camera {
             focal_length,
             samples_per_pixel,
             pixel_sample_scale,
+            max_depth,
             center,
             delta_x,
             delta_y,
@@ -53,7 +55,7 @@ impl Camera {
                 let mut color = Color::zeros();
                 for sample in 0..self.samples_per_pixel {
                     let ray = self.get_ray(x,y);
-                    color += Self::ray_color(ray, world);
+                    color += Self::ray_color(ray, self.max_depth, world);
                 }
                 write_color(pixel, self.pixel_sample_scale * color);
             }
@@ -76,10 +78,14 @@ impl Camera {
         Vec3::from(rand_f64() - 0.5, rand_f64() - 0.5, 0.0)
     }
 
-    fn ray_color(ray: Ray, world: &dyn Hittable) -> Color {
-        if let Some(rec) = world.hit(ray, Interval::from(0.0, f64::INFINITY)) {
-            let direction = Vec3::random_on_hemisphere(rec.normal);
-            return 0.5 * Self::ray_color(Ray::from(rec.p, direction), world);
+    fn ray_color(ray: Ray, depth: u32, world: &dyn Hittable) -> Color {
+        if depth <= 0 {
+            return Color::zeros();
+        }
+
+        if let Some(rec) = world.hit(ray, Interval::from(0.001, f64::INFINITY)) {
+            let direction = rec.normal + Vec3::random_unit_vector();
+            return 0.5 * Self::ray_color(Ray::from(rec.p, direction), depth - 1, world);
         }
 
         let unit_direction = Vec3::unit_vector(ray.direction);
