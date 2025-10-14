@@ -19,8 +19,26 @@ fn main() {
     let camera = Camera::from(&image, 1.0, 2.0, 100, 50);
 
     let world = HittableList::from(vec![
-        Rc::new(Sphere::from(-Point3::unit_z(), 0.5)),
-        Rc::new(Sphere::from(Point3::from(0.0, -100.5, -1.0), 100.0)),
+        Sphere::from(
+            Point3::from(0.0, -100.5, -1.0),
+            100.0,
+            Lambertian::from(Color::from(0.8,0.8,0.0))
+        ),
+        Sphere::from(
+            Point3::from(0.0,0.0,-1.2),
+            0.5,
+            Lambertian::from(Color::from(0.1,0.2,0.5))
+        ),
+        Sphere::from(
+            Point3::from(-1.0,0.0,-1.0),
+            0.5,
+            Metal::from(Color::from(0.8,0.8,0.8), 0.3)
+        ),
+        Sphere::from(
+            Point3::from(1.0, 0.0, -1.0),
+            0.5,
+            Metal::from(Color::from(0.8, 0.6, 0.2), 1.0)
+        )
     ]);
 
     camera.render(&mut image, &world);
