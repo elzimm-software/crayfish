@@ -17,10 +17,11 @@ use camera::Camera;
 use image::Image;
 use crate::hittable::{HitRecord, Hittable};
 use crate::hittable_list::HittableList;
+use crate::interval::Interval;
 use crate::sphere::Sphere;
 
 fn ray_color(ray: Ray, world: &dyn Hittable) -> Color {
-    if let Some(rec) = world.hit(ray, 0.0, f64::INFINITY) {
+    if let Some(rec) = world.hit(ray, Interval::from(0.0, f64::INFINITY)) {
         return 0.5 * (rec.normal + Color::ones());
     }
 
