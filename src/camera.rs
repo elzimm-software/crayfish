@@ -1,10 +1,10 @@
 use crate::color::{write_color, Color};
 use crate::hittable::Hittable;
 use crate::image::Image;
-use crate::interval::Interval;
+use crate::utils::Interval;
 use crate::ray::Ray;
 use crate::utils::rand_f64;
-use crate::vec3::{Point3, Vec3};
+use crate::utils::{Point3, Vec3};
 
 // ------- CAMERA -------------------------------------------------------------------
 #[derive(Default)]

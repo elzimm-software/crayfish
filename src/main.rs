@@ -1,20 +1,18 @@
 mod camera;
 mod color;
 mod hittable;
-mod hittable_list;
 mod image;
-mod interval;
 mod ray;
-mod sphere;
 mod utils;
-mod vec3;
+mod material;
 
-use crate::hittable_list::HittableList;
-use crate::sphere::Sphere;
-use crate::vec3::Point3;
+use hittable::HittableList;
+use hittable::Sphere;
+use utils::Point3;
 use camera::Camera;
 use image::Image;
-use std::rc::Rc;
+use crate::color::Color;
+use crate::material::{Lambertian, Metal};
 
 fn main() {
     let mut image = Image::from(16.0 / 9.0, 1920);

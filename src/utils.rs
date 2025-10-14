@@ -1,6 +1,9 @@
 pub use std::f64::consts::PI as fPI;
 use rand::Rng;
 
+mod vec3;
+mod interval;
+
 #[inline(always)]
 pub fn degrees_to_radians(degrees: f64) -> f64 {
     degrees * fPI / 180.0
@@ -20,3 +23,6 @@ pub fn rand_f64() -> f64 {
 pub fn rand_f64_in(min: f64, max: f64) -> f64 {
     rand::rng().random_range(min..max)
 }
+
+pub use vec3::{Vec3, Point3};
+pub use interval::Interval;

@@ -1,8 +1,13 @@
-use crate::interval::Interval;
+use std::rc::Rc;
+use crate::utils::Interval;
+use crate::material::Material;
 use crate::ray::Ray;
-use crate::vec3::{Point3, Vec3};
+use crate::utils::{Point3, Vec3};
 
-#[derive(Default, Copy, Clone)]
+mod sphere;
+mod hittable_list;
+
+#[derive(Clone)]
 pub struct HitRecord {
     pub p: Point3,
     pub normal: Vec3,
@@ -33,3 +38,6 @@ impl HitRecord {
 pub trait Hittable {
     fn hit(&self, ray: Ray, t: Interval) -> Option<HitRecord>;
 }
+
+pub use sphere::Sphere;
+pub use hittable_list::HittableList;
