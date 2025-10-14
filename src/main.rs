@@ -7,6 +7,7 @@ mod ray;
 mod sphere;
 mod utils;
 mod vec3;
+mod interval;
 
 use std::rc::Rc;
 use crate::color::{write_color, Color};
