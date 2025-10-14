@@ -1,19 +1,23 @@
+use crate::color::{write_color, Color};
+use crate::hittable::Hittable;
 use crate::image::Image;
+use crate::interval::Interval;
+use crate::ray::Ray;
 use crate::vec3::{Point3, Vec3};
 
 // ------- CAMERA -------------------------------------------------------------------
 #[derive(Default)]
 pub struct Camera {
-    pub focal_length: f64,
-    pub height: f64,
-    pub width: f64,
-    pub center: Point3,
-    pub x: Vec3,
-    pub y: Vec3,
-    pub delta_x: Vec3,
-    pub delta_y: Vec3,
-    pub upper_left: Vec3,
-    pub pixel00: Vec3,
+    focal_length: f64,
+    height: f64,
+    width: f64,
+    center: Point3,
+    x: Vec3,
+    y: Vec3,
+    delta_x: Vec3,
+    delta_y: Vec3,
+    upper_left: Vec3,
+    pixel00: Vec3,
 }
 
 impl Camera {
@@ -42,5 +46,31 @@ impl Camera {
             upper_left,
             pixel00,
         }
+    }
+
+    pub fn render(&self, image: &mut Image, world: &dyn Hittable) {
+        for (y, row) in image.buffer.enumerate_rows_mut() {
+            println!("\rScanlines remaining: {}          ", image.height - y);
+            for (x, _, pixel) in row {
+                let pixel_center =
+                    self.pixel00 + (x as f64 * self.delta_x) + (y as f64 * self.delta_y);
+                let ray_direction = pixel_center - self.center;
+                let ray = Ray::from(self.center, ray_direction);
+                let color = Self::ray_color(ray, world);
+                write_color(pixel, color)
+            }
+        }
+
+        println!("\rDone                             \n");
+    }
+
+    fn ray_color(ray: Ray, world: &dyn Hittable) -> Color {
+        if let Some(rec) = world.hit(ray, Interval::from(0.0, f64::INFINITY)) {
+            return 0.5 * (rec.normal + Color::ones());
+        }
+
+        let unit_direction = Vec3::unit_vector(ray.direction);
+        let a = 0.5 * (unit_direction.y + 1.0);
+        (1.0 - a) * Color::ones() + a * Color::from(0.5, 0.7, 1.0)
     }
 }
