@@ -36,7 +36,7 @@ impl Hittable for HittableList {
         let mut closest_so_far = t.max;
 
         for object in &self.objects {
-            if let Some(rec) = object.hit(ray, Interval::from(t.min, closest_so_far)) {
+            if let Some(rec) = object.hit(ray, (t.min, closest_so_far).into()) {
                 closest_so_far = rec.t;
                 best_hit = Some(rec);
             }

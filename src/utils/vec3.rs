@@ -167,6 +167,16 @@ impl Vec3 {
             -on_unit_sphere
         }
     }
+    
+    #[inline(always)]
+    pub fn random_in_unit_disk() -> Vec3 {
+        loop {
+            let p = Vec3::from(rand_f64_in(-1.0, 1.0), rand_f64_in(-1.0, 1.0), 0.0);
+            if p.length_squared() < 1.0 {
+                return p;
+            }
+        }
+    }
 
     #[inline(always)]
     pub fn reflect(v: Self, n: Self) -> Self {

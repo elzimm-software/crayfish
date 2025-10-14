@@ -21,10 +21,12 @@ fn main() {
         &image,
         100,
         50,
-        90.0,
-        Point3::from(-2.0,2.0,1.0),
+        20.0,
+        (-2.0,2.0,1.0),
         -Point3::unit_z(),
-        Vec3::unit_y()
+        Vec3::unit_y(),
+        10.0,
+        3.4,
     );
 
     let world = HittableList::from(vec![

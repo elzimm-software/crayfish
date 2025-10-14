@@ -48,6 +48,15 @@ impl Interval {
     }
 }
 
+impl From<(f64, f64)> for Interval {
+    fn from(value: (f64, f64)) -> Self {
+        Self {
+            min: value.0,
+            max: value.1,
+        }
+    }
+}
+
 impl Default for Interval {
     fn default() -> Self {
         Self {

@@ -17,7 +17,10 @@ pub struct HitRecord {
 }
 
 impl HitRecord {
-    pub fn from(p: Point3, t: f64, ray: Ray, material: Rc<dyn Material>, outward_normal: Vec3) -> Self {
+    pub fn from(p: impl Into<Point3>, t: f64, ray: impl Into<Ray>, material: Rc<dyn Material>, outward_normal: impl Into<Vec3>) -> Self {
+        let p = p.into();
+        let outward_normal = outward_normal.into();
+        let ray = ray.into();
         let front_face = Vec3::dot(ray.direction, outward_normal) < 0.0;
         Self {
             p,

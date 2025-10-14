@@ -11,8 +11,11 @@ impl Ray {
         Self::default()
     }
 
-    pub fn from(origin: Point3, direction: Vec3) -> Self {
-        Self { origin, direction }
+    pub fn from(origin: impl Into<Point3>, direction: impl Into<Vec3>) -> Self {
+        Self {
+            origin:origin.into(),
+            direction:direction.into(),
+        }
     }
 
     pub fn at(&self, t: f64) -> Point3 {
