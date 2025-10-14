@@ -4,6 +4,8 @@ use crate::utils::{rand_f64, rand_f64_in};
 
 pub type Point3 = Vec3;
 
+const S: f64 = 1e-8;
+
 #[derive(Default, Copy, Clone)]
 pub struct Vec3 {
     pub x: f64,
@@ -114,6 +116,10 @@ impl Vec3 {
         }
     }
 
+    pub fn near_zero(&self) -> bool {
+        (self.x.abs() < S) && (self.y.abs() < S) && (self.z.abs() < S)
+    }
+
     #[inline(always)]
     pub fn random() -> Self {
         Self {
@@ -160,6 +166,11 @@ impl Vec3 {
         } else {
             -on_unit_sphere
         }
+    }
+
+    #[inline(always)]
+    pub fn reflect(v: Vec3, n: Vec3) -> Vec3 {
+        v - 2.0 * Self::dot(v,n) * n
     }
 }
 

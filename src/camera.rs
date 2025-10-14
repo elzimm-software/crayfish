@@ -84,8 +84,10 @@ impl Camera {
         }
 
         if let Some(rec) = world.hit(ray, Interval::from(0.001, f64::INFINITY)) {
-            let direction = rec.normal + Vec3::random_unit_vector();
-            return 0.5 * Self::ray_color(Ray::from(rec.p, direction), depth - 1, world);
+            if let Some((scattered, attenuation)) = rec.clone().material.scatter(ray, rec) {
+                return attenuation * Self::ray_color(scattered, depth-1, world);
+            }
+            return Color::zeros();
         }
 
         let unit_direction = Vec3::unit_vector(ray.direction);

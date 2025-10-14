@@ -1,25 +1,24 @@
+use std::rc::Rc;
 use crate::hittable::{HitRecord, Hittable};
 use crate::utils::Interval;
 use crate::material::Material;
 use crate::ray::Ray;
 use crate::utils::{Point3, Vec3};
 
-#[derive(Default, Copy, Clone)]
+#[derive(Clone)]
 pub struct Sphere {
     pub center: Point3,
     pub radius: f64,
+    pub material: Rc<dyn Material>
 }
 
 impl Sphere {
-    pub fn new() -> Self {
-        Self::default()
-    }
-
-    pub fn from(center: Point3, radius: f64) -> Self {
-        Self {
+    pub fn from(center: Point3, radius: f64, material: Rc<dyn Material>) -> Rc<Self> {
+        Rc::new(Self {
             center,
             radius: radius.max(0.0),
-        }
+            material,
+        })
     }
 }
 
@@ -50,6 +49,7 @@ impl Hittable for Sphere {
             p,
             root,
             ray,
+            self.material.clone(),
             (p - self.center) / self.radius,
         ))
     }
