@@ -182,6 +182,16 @@ impl Vec3 {
     }
 }
 
+impl From<(f64, f64, f64)> for Vec3 {
+    fn from(value: (f64, f64, f64)) -> Self {
+        Self {
+            x: value.0,
+            y: value.1,
+            z: value.2,
+        }
+    }
+}
+
 impl Neg for Vec3 {
     type Output = Vec3;
 

@@ -15,9 +15,9 @@ impl Lambertian {
         Self::default()
     }
     
-    pub fn from(albedo: Color) -> Rc<Self> {
+    pub fn from(albedo: impl Into<Color>) -> Rc<Self> {
         Rc::new(Self {
-            albedo,
+            albedo: albedo.into(),
         })
     }
 }

@@ -16,9 +16,9 @@ impl Metal {
         Self::default()
     }
 
-    pub fn from(albedo: Color, fuzz: f64) -> Rc<Self> {
+    pub fn from(albedo: impl Into<Color>, fuzz: f64) -> Rc<Self> {
         Rc::new(Self {
-            albedo,
+            albedo: albedo.into(),
             fuzz: fuzz.min(1.0),
         })
     }

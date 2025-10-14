@@ -13,9 +13,9 @@ pub struct Sphere {
 }
 
 impl Sphere {
-    pub fn from(center: Point3, radius: f64, material: Rc<dyn Material>) -> Rc<Self> {
+    pub fn from(center: impl Into<Point3>, radius: f64, material: Rc<dyn Material>) -> Rc<Self> {
         Rc::new(Self {
-            center,
+            center: center.into(),
             radius: radius.max(0.0),
             material,
         })
