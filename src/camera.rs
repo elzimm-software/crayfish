@@ -40,7 +40,7 @@ impl Camera {
             pixel_sample_scale,
             center,
             delta_x,
-            delta_y, 
+            delta_y,
             upper_left,
             pixel00,
         }
@@ -61,24 +61,25 @@ impl Camera {
 
         println!("\rDone                             \n");
     }
-    
+
     fn get_ray(&self, x: u32, y: u32) -> Ray {
         let offset = Self::sample_square();
         let sample = self.pixel00 + ((x as f64 + offset.x) * self.delta_x) + ((y as f64 + offset.y) * self.delta_y);
-        
+
         let origin = self.center;
         let direction = sample - origin;
-        
+
         Ray::from(origin, direction)
     }
-    
+
     fn sample_square() -> Vec3 {
         Vec3::from(rand_f64() - 0.5, rand_f64() - 0.5, 0.0)
     }
 
     fn ray_color(ray: Ray, world: &dyn Hittable) -> Color {
         if let Some(rec) = world.hit(ray, Interval::from(0.0, f64::INFINITY)) {
-            return 0.5 * (rec.normal + Color::ones());
+            let direction = Vec3::random_on_hemisphere(rec.normal);
+            return 0.5 * Self::ray_color(Ray::from(rec.p, direction), world);
         }
 
         let unit_direction = Vec3::unit_vector(ray.direction);

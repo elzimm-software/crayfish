@@ -17,7 +17,7 @@ use image::Image;
 use std::rc::Rc;
 
 fn main() {
-    let mut image = Image::from(16.0 / 9.0, 400);
+    let mut image = Image::from(16.0 / 9.0, 1920);
     let camera = Camera::from(&image, 1.0, 2.0, 100);
 
     let world = HittableList::from(vec![

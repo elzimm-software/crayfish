@@ -1,5 +1,6 @@
 use std::fmt::{Display, Formatter};
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub};
+use crate::utils::{rand_f64, rand_f64_in};
 
 pub type Point3 = Vec3;
 
@@ -71,10 +72,12 @@ impl Vec3 {
         }
     }
 
+    #[inline(always)]
     pub fn dot(u: Vec3, v: Vec3) -> f64 {
         u.x * v.x + u.y * v.y + u.z * v.z
     }
 
+    #[inline(always)]
     pub fn cross(u: Vec3, v: Vec3) -> Self {
         Self {
             x: u.y * v.z - u.z * v.y,
@@ -83,16 +86,80 @@ impl Vec3 {
         }
     }
 
+    #[inline(always)]
     pub fn length(&self) -> f64 {
         self.length_squared().sqrt()
     }
 
+    #[inline(always)]
+    pub fn stable_length(&self) -> f64 {
+        self.stable_length_squared().sqrt()
+    }
+
+    #[inline(always)]
     pub fn length_squared(&self) -> f64 {
         self.x * self.x + self.y * self.y + self.z * self.z
     }
 
-    pub fn unit_vector(v: Vec3) -> Vec3 {
+    #[inline(always)]
+    pub fn stable_length_squared(&self) -> f64 {
+        let max = self.x.abs().max(self.y.abs()).max(self.z.abs());
+        if max == 0.0 {
+            0.0
+        } else {
+            let x = self.x / max;
+            let y = self.y / max;
+            let z = self.z / max;
+            max * max * (x * x + y * y + z * z)
+        }
+    }
+
+    #[inline(always)]
+    pub fn random() -> Self {
+        Self {
+            x: rand_f64(),
+            y: rand_f64(),
+            z: rand_f64(),
+        }
+    }
+
+    #[inline(always)]
+    pub fn random_in(min: f64, max: f64) -> Self {
+        Self {
+            x: rand_f64_in(min, max),
+            y: rand_f64_in(min, max),
+            z: rand_f64_in(min, max),
+        }
+    }
+
+    #[inline(always)]
+    pub fn unit_vector(v: Self) -> Self {
         v / v.length()
+    }
+
+    #[inline(always)]
+    pub fn stable_unit_vector(v: Self) -> Self {
+        v / v.stable_length()
+    }
+
+    #[inline(always)]
+    pub fn random_unit_vector() -> Self {
+        loop {
+            let p = Self::random_in(-1.0, 1.0);
+            if p.stable_length_squared() <= 1.0 {
+                return Self::stable_unit_vector(p);
+            }
+        }
+    }
+
+    #[inline(always)]
+    pub fn random_on_hemisphere(normal: Self) -> Self {
+        let on_unit_sphere = Self::random_unit_vector();
+        if Self::dot(on_unit_sphere, normal) > 0.0 {
+            on_unit_sphere
+        } else {
+            -on_unit_sphere
+        }
     }
 }
 
@@ -117,6 +184,7 @@ impl Display for Vec3 {
 impl Add<Vec3> for Vec3 {
     type Output = Vec3;
 
+    #[inline(always)]
     fn add(self, rhs: Vec3) -> Self::Output {
         Self::Output {
             x: self.x + rhs.x,
@@ -129,6 +197,7 @@ impl Add<Vec3> for Vec3 {
 impl Sub<Vec3> for Vec3 {
     type Output = Vec3;
 
+    #[inline(always)]
     fn sub(self, rhs: Vec3) -> Self::Output {
         Self::Output {
             x: self.x - rhs.x,
@@ -141,6 +210,7 @@ impl Sub<Vec3> for Vec3 {
 impl Mul<Vec3> for Vec3 {
     type Output = Vec3;
 
+    #[inline(always)]
     fn mul(self, rhs: Vec3) -> Self::Output {
         Self::Output {
             x: self.x * rhs.x,
@@ -153,6 +223,7 @@ impl Mul<Vec3> for Vec3 {
 impl Mul<f64> for Vec3 {
     type Output = Vec3;
 
+    #[inline(always)]
     fn mul(self, rhs: f64) -> Self::Output {
         Self::Output {
             x: self.x * rhs,
@@ -165,6 +236,7 @@ impl Mul<f64> for Vec3 {
 impl Mul<Vec3> for f64 {
     type Output = Vec3;
 
+    #[inline(always)]
     fn mul(self, rhs: Vec3) -> Self::Output {
         Self::Output {
             x: self * rhs.x,
@@ -177,6 +249,7 @@ impl Mul<Vec3> for f64 {
 impl Div<f64> for Vec3 {
     type Output = Vec3;
 
+    #[inline(always)]
     fn div(self, rhs: f64) -> Self::Output {
         Self::Output {
             x: self.x / rhs,
