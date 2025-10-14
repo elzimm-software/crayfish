@@ -169,8 +169,16 @@ impl Vec3 {
     }
 
     #[inline(always)]
-    pub fn reflect(v: Vec3, n: Vec3) -> Vec3 {
+    pub fn reflect(v: Self, n: Self) -> Self {
         v - 2.0 * Self::dot(v,n) * n
+    }
+
+    #[inline(always)]
+    pub fn refract(uv: Self, n: Self, etai_over_etat: f64) -> Self {
+        let cos_theta = Self::dot(-uv, n).min(1.0);
+        let perp = etai_over_etat * (uv + cos_theta * n);
+        let parallel = -(1.0 - perp.length_squared()).abs().sqrt() * n;
+        perp + parallel
     }
 }
 

@@ -12,7 +12,7 @@ use utils::Point3;
 use camera::Camera;
 use image::Image;
 use crate::color::Color;
-use crate::material::{Lambertian, Metal};
+use crate::material::{Dielectric, Lambertian, Metal};
 
 fn main() {
     let mut image = Image::from(16.0 / 9.0, 1920);
@@ -32,7 +32,12 @@ fn main() {
         Sphere::from(
             Point3::from(-1.0,0.0,-1.0),
             0.5,
-            Metal::from(Color::from(0.8,0.8,0.8), 0.3)
+            Dielectric::from(1.50)
+        ),
+        Sphere::from(
+            Point3::from(-1.0, 0.0, -1.0),
+            0.4,
+            Dielectric::from(1.00/ 1.50)
         ),
         Sphere::from(
             Point3::from(1.0, 0.0, -1.0),

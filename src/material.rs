@@ -3,6 +3,7 @@ use crate::hittable::HitRecord;
 use crate::ray::Ray;
 mod lambertian;
 mod metal;
+mod dielectric;
 
 pub trait Material {
     fn scatter(&self, ray: Ray, rec: HitRecord) -> Option<(Ray, Color)>;
@@ -10,3 +11,4 @@ pub trait Material {
 
 pub use lambertian::Lambertian;
 pub use metal::Metal;
+pub use dielectric::Dielectric;
