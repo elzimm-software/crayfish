@@ -1,6 +1,6 @@
-use crate::utils::vec3::Vec3;
+use crate::utils::Vec3;
 use image::Rgb;
-use crate::utils::interval::Interval;
+use crate::utils::Interval;
 use once_cell::sync::Lazy;
 
 static INTENSITY: Lazy<Interval> = Lazy::new(|| {
@@ -24,7 +24,7 @@ fn linear_to_gamma(linear_component: f64) -> f64 {
 }
 
 pub fn write_color(pixel: &mut Rgb<u8>, color: Color) {
-    
+
     let r = linear_to_gamma(color.x);
     let g = linear_to_gamma(color.y);
     let b = linear_to_gamma(color.z);
