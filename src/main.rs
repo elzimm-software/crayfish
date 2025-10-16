@@ -6,36 +6,56 @@ mod ray;
 mod utils;
 mod material;
 
+use std::rc::Rc;
 use hittable::HittableList;
 use hittable::Sphere;
 use utils::Point3;
 use camera::Camera;
 use image::Image;
 use crate::color::Color;
-use crate::material::{Dielectric, Lambertian, Metal};
-use crate::utils::{fPI, Vec3};
+use crate::material::{Dielectric, Lambertian, Material, Metal};
+use crate::utils::{fPI, rand_f64, rand_f64_in, Vec3};
 
 fn main() {
-    let mut image = Image::from(16.0 / 9.0, 1920);
+    let mut image = Image::from(
+        16.0 / 9.0,
+        1200
+    );
     let camera = Camera::from(
         &image,
-        100,
+        500,
         50,
         20.0,
-        (-2.0,2.0,1.0),
-        -Point3::unit_z(),
+        (13.0,2.0,3.0),
+        Point3::zeros(),
         Vec3::unit_y(),
+        0.6,
         10.0,
-        3.4,
     );
 
-    let world = HittableList::from(vec![
-        Sphere::from((0.0,-100.5,-1.0), 100.0, Lambertian::from((0.8,0.8,0.0))),
-        Sphere::from((0.0, 0.0, -1.2), 0.5, Lambertian::from((0.1,0.2,0.5))),
-        Sphere::from((-1.0, 0.0, -1.0), 0.5, Dielectric::from(1.50)),
-        Sphere::from((-1.0, 0.0, -1.0), 0.4, Dielectric::from(1.00/1.50)),
-        Sphere::from((1.0, 0.0, -1.0), 0.5, Metal::from((0.8, 0.8, 0.2), 1.0)),
+    let mut world = HittableList::from(vec![
+        Sphere::from((0.0,-1000.0, 0.0), 1000.0, Lambertian::from((0.5,0.5,0.5))),
+        Sphere::from((0.0, 1.0, 0.0), 1.0, Dielectric::from(1.5)),
+        Sphere::from((-4.0, 1.0, 0.0), 1.0, Lambertian::from((0.4,0.2,0.1))),
+        Sphere::from((0.4,1.0,0.0), 1.0, Metal::from((0.7, 0.6, 0.5), 0.0))
     ]);
+
+    for a in -11..11 {
+        for b in -11..11 {
+            let choose_mat = rand_f64();
+            let center = Point3::from(a as f64 + 0.9 * rand_f64(), 0.2, b as f64 + 0.9 * rand_f64());
+            if (center - Point3::from(4.0,0.2,0.0)).length() > 0.9 {
+                let material: Rc<dyn Material> = if choose_mat < 0.8 {
+                    Lambertian::from(Color::random() * Color::random())
+                } else if choose_mat < 0.95 {
+                    Metal::from(Color::random_in(0.5, 1.0), rand_f64_in(0.0, 0.5))
+                } else {
+                    Dielectric::from(1.5)
+                };
+                world.add(Sphere::from(center, 0.2, material));
+            }
+        }
+    }
 
     camera.render(&mut image, &world);
 
