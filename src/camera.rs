@@ -118,8 +118,9 @@ impl Camera {
 
         let origin = if self.defocus_angle <= 0.0 {self.center} else {self.defocus_disk_sample()};
         let direction = sample - origin;
+        let time = rand_f64();
 
-        Ray::from(origin, direction)
+        Ray::with_time(origin, direction, time)
     }
 
     fn sample_square() -> Vec3 {

@@ -19,11 +19,11 @@ use crate::utils::{fPI, rand_f64, rand_f64_in, Vec3};
 fn main() {
     let mut image = Image::from(
         16.0 / 9.0,
-        1200
+        400
     );
     let camera = Camera::from(
         &image,
-        500,
+        100,
         50,
         20.0,
         (13.0,2.0,3.0),
@@ -45,14 +45,14 @@ fn main() {
             let choose_mat = rand_f64();
             let center = Point3::from(a as f64 + 0.9 * rand_f64(), 0.2, b as f64 + 0.9 * rand_f64());
             if (center - Point3::from(4.0,0.2,0.0)).length() > 0.9 {
-                let material: Rc<dyn Material> = if choose_mat < 0.8 {
-                    Lambertian::from(Color::random() * Color::random())
+                world.add(if choose_mat < 0.8 {
+                    let center2 = center + Vec3::from_y(rand_f64_in(0.0, 0.5));
+                    Sphere::with_time(center, center2, 0.2, Lambertian::from(Color::random() * Color::random()))
                 } else if choose_mat < 0.95 {
-                    Metal::from(Color::random_in(0.5, 1.0), rand_f64_in(0.0, 0.5))
+                    Sphere::from(center, 0.2, Metal::from(Color::random_in(0.5, 1.0), rand_f64_in(0.0, 0.5)))
                 } else {
-                    Dielectric::from(1.5)
-                };
-                world.add(Sphere::from(center, 0.2, material));
+                    Sphere::from(center, 0.2, Dielectric::from(1.5))
+                });
             }
         }
     }

@@ -42,6 +42,6 @@ impl Material for Dielectric {
             Vec3::refract(unit_direction, rec.normal, ri)
         };
 
-        Some((Ray::from(rec.p, direction), Color::ones()))
+        Some((Ray::with_time(rec.p, direction, ray.time), Color::ones()))
     }
 }

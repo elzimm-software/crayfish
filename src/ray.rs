@@ -4,6 +4,7 @@ use crate::utils::{Point3, Vec3};
 pub struct Ray {
     pub origin: Point3,
     pub direction: Vec3,
+    pub time: f64,
 }
 
 impl Ray {
@@ -15,6 +16,14 @@ impl Ray {
         Self {
             origin:origin.into(),
             direction:direction.into(),
+            time: 0.0,
+        }
+    }
+
+    pub fn with_time(origin: impl Into<Point3>, direction: impl Into<Vec3>, time: f64) -> Self {
+        Self {
+            time,
+            ..Self::from(origin, direction)
         }
     }
 
